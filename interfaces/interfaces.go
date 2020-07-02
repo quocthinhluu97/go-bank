@@ -39,4 +39,6 @@ type Validation struct {
 	Valid string
 }
 
-
+type ErrResponse struct {
+	Message string
+}
