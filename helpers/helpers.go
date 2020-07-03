@@ -35,6 +35,8 @@ func ConnectDB() *gorm.DB {
 
 	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=gobank")
 	HandleErr(err)
+	defer db.Close()
+
 	return db
 }
 

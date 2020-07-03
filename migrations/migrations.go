@@ -7,13 +7,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-
-// func connectDB() *gorm.DB {
-// 	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=gobank")
-// 	HandleErr(err)
-// 	return db
-// }
-
 func createAccounts() {
 	db := helpers.ConnectDB()
 
@@ -47,4 +40,12 @@ func Migrate() {
 }
 
 
+func MigrateTransactions() {
+	Transactions := &interfaces.Transaction{}
+
+	db := helpers.ConnectDB()
+	db.AutoMigrate(&Transactions)
+
+	defer db.Close()
+}
 

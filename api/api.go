@@ -10,6 +10,7 @@ import (
 	"github.com/quocthinhluu97/go-bank/helpers"
 	"github.com/quocthinhluu97/go-bank/users"
 	"github.com/quocthinhluu97/go-bank/interfaces"
+	"github.com/quocthinhluu97/go-bank/useraccounts"
 	"github.com/gorilla/mux"
 
 )
@@ -23,6 +24,13 @@ type Register struct {
 	Username string
 	Email string
 	Password string
+}
+
+type TransactionBody struct {
+	UserId uint
+	From uint
+	To uint
+	Amount int
 }
 
 
@@ -48,6 +56,7 @@ func StartAPI() {
 	router.HandleFunc("/login", login).Methods("POST")
 	router.HandleFunc("/register", register).Methods("POST")
 	router.HandleFunc("/user/{id}", getUser).Methods("GET")
+	router.HandleFunc("transaction", transaction).Methods("POST")
 	fmt.Println("App is working on port 8888")
 	log.Fatal(http.ListenAndServe(":8888", router))
 }
@@ -89,4 +98,15 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	user := users.GetUser(userId, auth)
 	apiResponse(user, w)
 
+}
+
+func transaction(w http.ResponseWriter, r *http.Request) {
+	body := readBody(r)
+	auth := r.Header.Get("Authorization")
+	var formattedBody TransactionBody
+	err := json.Unmarshal(body, &formattedBody)
+	helpers.HandleErr(err)
+
+	transaction := useraccounts.Transaction(formattedBody.UserId, formattedBody.From,formattedBody.To, formattedBody.Amount, auth)
+	apiResponse(transaction, w)
 }

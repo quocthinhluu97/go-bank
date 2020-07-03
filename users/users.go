@@ -47,33 +47,31 @@ func Login(username string, pass string) map[string]interface{} {
 				{Value: pass, Valid: "password"},
 			})
 
-	if !valid {
-		return map[string]interface{}{"message":"not valid value"}
+	if valid {
+		db := helpers.ConnectDB()
+		user := &interfaces.User{}
+
+		if db.Where("username = ? ", username).First(&user).RecordNotFound() {
+			return map[string]interface{}{"message": "user not found"}
+		}
+
+		passErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pass))
+
+		if passErr == bcrypt.ErrMismatchedHashAndPassword && passErr != nil {
+			return map[string]interface{}{"message":"wrong password"}
+		}
+
+
+		accounts := []interfaces.ResponseAccount{}
+		db.Table("accounts").Select("id, name, balance").Where("user_id = ? ", user.ID).Scan(&accounts)
+
+		defer db.Close()
+
+		var response = prepareResponse(user, accounts, true)
+		return response
 	}
 
-
-
-	db := helpers.ConnectDB()
-	user := &interfaces.User{}
-
-	if db.Where("username = ? ", username).First(&user).RecordNotFound() {
-		return map[string]interface{}{"message": "user not found"}
-	}
-
-	passErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pass))
-
-	if passErr == bcrypt.ErrMismatchedHashAndPassword && passErr != nil {
-		return map[string]interface{}{"message":"wrong password"}
-	}
-
-
-	accounts := []interfaces.ResponseAccount{}
-	db.Table("accounts").Select("id, name, balance").Where("user_id = ? ", user.ID).Scan(&accounts)
-
-	defer db.Close()
-
-	var response = prepareResponse(user, accounts, true)
-	return response
+	return map[string]interface{}{"message":"not valid value"}
 
 }
 
