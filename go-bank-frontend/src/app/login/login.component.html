@@ -2,9 +2,9 @@
                                  justify-center">
   <div class="w-full max-w-xs">
     <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <img src="../../assets/logo.png" class="logo" />
+      <img src="../../assets/doge_coin2.png" class="logo" />
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2"
+        <label class="block text-gray-700 text-sm font-bold mb-2 mt-4"
                for="username">
           Username
         </label>
@@ -34,9 +34,14 @@
                        focus:shadow-outline" type="button" (click)="onSubmit()">
           Sign In
         </button>
+      </div>
+      <div class="flex items-center justify-between mt-4">
+        <p class="inline-block align-baseline text-sm text-blue-500">
+          Already have an account ?
+        </p>
         <a class="inline-block align-baseline font-bold text-sm
-                  text-blue-500 hover:text-blue-800" href="#">
-          Forgot Password?
+                  text-blue-500 hover:text-blue-800" [routerLink]="['/register']">
+          Sign Up
         </a>
       </div>
     </form>

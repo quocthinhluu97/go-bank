@@ -1,4 +1,3 @@
-
 package users
 
 import (
@@ -22,7 +21,7 @@ func GetUser(id string, jwt string) map[string]interface{} {
 		}
 
 		accounts := []interfaces.ResponseAccount{}
-		db.Table("accoutns").Select("id, name, balance").Where("user_id = ? ", user.ID).Scan(&accounts)
+		db.Table("accounts").Select("id, name, balance").Where("user_id = ? ", user.ID).Scan(&accounts)
 
 		defer db.Close()
 
@@ -35,8 +34,6 @@ func GetUser(id string, jwt string) map[string]interface{} {
 	}
 
 }
-
-
 
 func Login(username string, pass string) map[string]interface{} {
 
@@ -142,7 +139,6 @@ func Register(username string, email string, pass string) map[string]interface{}
 		var response = prepareResponse(user, accounts, true)
 
 		return response
-
 
 	} else {
 		return map[string]interface{}{"message":"not valid values"}

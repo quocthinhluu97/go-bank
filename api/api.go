@@ -17,7 +17,7 @@ import (
 
 type Login struct {
 	Username string
-	Passowrd string
+	Password string
 }
 
 type Register struct {

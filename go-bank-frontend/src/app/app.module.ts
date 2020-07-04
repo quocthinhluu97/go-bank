@@ -5,12 +5,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent  } from './dashboard/dashboard.component';
+import { AccountBalanceComponent } from './account-balance/account-balance.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         LoginComponent,
-        DashboardComponent
+        DashboardComponent,
+        AccountBalanceComponent,
+        RegisterComponent
 
     ],
     imports: [

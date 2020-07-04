@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../services/login/login.service';
+import { UserService } from '../services/user/user.service';
 
 @Component({
     selector: 'app-login',
@@ -14,18 +14,19 @@ export class LoginComponent implements OnInit {
 
 
     constructor(
-        private loginService: LoginService,
+        private userService: UserService,
     ) {}
 
 
 
     ngOnInit(): void {
-        this.loginService
+        this.userService
             .errorSubject
             .subscribe(errorMessage => {
                 this.error = errorMessage;
             });
     }
+
     validateUsername(): void {
         const pattern = RegExp(/^[\w-.]*$/)
         if (pattern.test(this.username)) {
@@ -34,6 +35,7 @@ export class LoginComponent implements OnInit {
             this.isUsernameValid = false;
         }
     }
+
     onKey(event: any, type: string) {
         if (type === 'username') {
             this.username = event.target.value;
@@ -45,7 +47,7 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         if (this.isUsernameValid) {
-            this.loginService
+            this.userService
                 .login(this.username, this.password);
         }
     }
