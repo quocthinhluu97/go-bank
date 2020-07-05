@@ -13,6 +13,7 @@ const httpOptions = {
 @Injectable({
     providedIn: 'root'
 })
+
 export class UserService {
     url: any = 'http://localhost:4200/api/';
     errorSubject: any = new BehaviorSubject<any>(null);
@@ -33,20 +34,25 @@ export class UserService {
 
                 if (res.data) {
                     this.userSubject.next(res.data);
+                    sessionStorage.setItem('userId', res.data.ID)
                 }
-
-                this.router.navigateByUrl('dashboard');
+                this.router.navigateByUrl('');
             } else if (res.Message) {
                 this.errorSubject.next(res.Message);
             }
         });
     }
 
-    isAuthenticated(): boolean {
-        if (sessionStorage.getItem('jwt')) {
-            return true;
-        }
-        return false;
+    getUser() {
+        const userId = sessionStorage.getItem('userId');
+        const jwtToken = sessionStorage.getItem('jwt');
+        const reqHeader = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + jwtToken,
+            })
+        };
+        return this.http.get(`${this.url}user/${userId}`, reqHeader);
     }
 
     register(Username: string, Email: string, Password: string) {
@@ -56,9 +62,9 @@ export class UserService {
                 this.errorSubject.next(null);
                 if (res.data) {
                     this.userSubject.next(res.data);
-
+                    sessionStorage.setItem('userId', res.data.ID)
                 }
-                this.router.navigateByUrl('dashboard');
+                this.router.navigateByUrl('');
 
             } else if (res.Message) {
                 this.errorSubject.next(res.Message);
