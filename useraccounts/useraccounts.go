@@ -3,29 +3,20 @@ package useraccounts
 import (
 	"github.com/quocthinhluu97/go-bank/helpers"
 	"github.com/quocthinhluu97/go-bank/interfaces"
+	"github.com/quocthinhluu97/go-bank/database"
 	"fmt"
 )
 
-
-// func updateAccount(id uint, amount int) {
-// 	db := helpers.ConnectDB()
-// 	db.Model(&interfaces.Account{}).Where("id = ?", id).Update("balance", amount)
-
-// 	defer db.Close()
-// }
-
 func getAccount(id uint) *interfaces.Account {
-	db := helpers.ConnectDB()
 	account := &interfaces.Account{}
 
-	if db.Where("id = ?", id).First(&account).RecordNotFound() {
+	if database.DB.Where("id = ?", id).First(&account).RecordNotFound() {
 		return nil
 	}
-	defer db.Close()
 	return account
 }
 
-func Transaction(userId uint, from uint, to uint, amount int, jwt string) map[string]interface{} {
+func Transaction(userId uint, from uint, to uint, amount uint, jwt string) map[string]interface{} {
 	userIdString := fmt.Sprint(userId)
 	isValid := helpers.ValidateToken(userIdString, jwt)
 	if isValid {
@@ -40,15 +31,16 @@ func Transaction(userId uint, from uint, to uint, amount int, jwt string) map[st
 			return map[string]interface{}{"Message": "You are not the owner of the account"}
 		}
 
-		if int(fromAccount.Balance) < amount {
-			return map[string]interface{}{"Message": "Accouont balance is not enough"}
+		if uint(fromAccount.Balance) < amount {
+			return map[string]interface{}{"Message": "Account balance is not enough"}
 		}
 
-		updatedAccount := updateAccount(from, int(fromAccount.Balance) - amount)
-		updateAccount(to, int(fromAccount.Balance) + amount)
+		updatedAccount := updateAccount(from, uint(fromAccount.Balance) - amount)
+		updateAccount(to, uint(toAccount.Balance) + amount)
 
 		var response = map[string]interface{}{"Message": "all is fine"}
-		response["data"] = updatedAccount
+		response["from"] = updatedAccount
+		response["amount"] = amount
 		return response
 	}
 
@@ -56,21 +48,17 @@ func Transaction(userId uint, from uint, to uint, amount int, jwt string) map[st
 }
 
 
-func updateAccount(id uint, amount int) interfaces.ResponseAccount {
-	db := helpers.ConnectDB()
+func updateAccount(id uint, amount uint) interfaces.ResponseAccount {
 	account := interfaces.Account{}
 	responseAcc := interfaces.ResponseAccount{}
 
-	db.Where("id = ?", id).First(&account)
+	database.DB.Where("id = ?", id).First(&account)
 	account.Balance = uint(amount)
-	db.Save(&account)
-
+	database.DB.Save(&account)
 
 	responseAcc.ID = account.ID
-	responseAcc.Name = account.Name
-	responseAcc.Balance = int(account.Balance)
-
-	defer db.Close()
+	responseAcc.Username = account.Username
+	responseAcc.Balance = uint(account.Balance)
 
 	return responseAcc
 }

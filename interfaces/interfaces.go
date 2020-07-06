@@ -4,6 +4,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+type ResponseTransaction struct {
+	Id uint
+	From uint
+	To uint
+	Amount int
+}
 
 type User struct {
 	gorm.Model
@@ -15,15 +21,15 @@ type User struct {
 type Account struct {
 	gorm.Model
 	Type string
-	Name string
+	Username string
 	Balance uint
 	UserID uint
 }
 
 type ResponseAccount struct {
 	ID  uint
-	Name string
-	Balance int
+	Balance uint
+	Username string
  }
 
 type ResponseUser struct {
@@ -47,5 +53,5 @@ type Transaction struct {
 	gorm.Model
 	From uint
 	To uint
-	Amount int
+	Amount uint
 }

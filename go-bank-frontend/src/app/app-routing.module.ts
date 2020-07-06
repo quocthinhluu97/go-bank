@@ -16,7 +16,6 @@ const routes: Routes = [
         component: DashboardComponent,
         canActivate: [AuthGuardGuard],
         resolve: { user: UserResolverService  }
-
     }
 
 ];

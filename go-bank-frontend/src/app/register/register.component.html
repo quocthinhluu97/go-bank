@@ -52,7 +52,7 @@
                       focus:outline-none focus:shadow-outline" id="confirm-password"
                type="password" placeholder="******************" (keyup)="onKey($event, 'confirmPassword')">
         <p *ngIf="!valid.password" class="text-red-500 text-xs-italic">
-          Confirm password is not correct
+          Confirm password does not match
         </p>
       </div>
       <div class="flex items-center justify-between">

@@ -3,7 +3,7 @@ package helpers
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"github.com/jinzhu/gorm"
+	// "github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"regexp"
 	"github.com/quocthinhluu97/go-bank/interfaces"
@@ -14,8 +14,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"strings"
 )
-
-
 
 func HandleErr(err error) {
 	if err != nil {
@@ -31,17 +29,9 @@ func HashAndSalt(pass []byte) string {
 	return string(hashed)
 }
 
-func ConnectDB() *gorm.DB {
-
-	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=gobank")
-	HandleErr(err)
-
-	return db
-}
-
 func Validation(values []interfaces.Validation) bool {
-	username := regexp.MustCompile("^[A-Za-z0-9]{5,}$")
-	email := regexp.MustCompile("^[A-Za-z0-9]+[@]+[A-Za-z0-9]+[.]+[A-Za-z]$")
+	username := regexp.MustCompile(`^([A-Za-z0-9]{5,})+$`)
+	email := regexp.MustCompile(`^[A-Za-z0-9]+[@]+[A-Za-z0-9]+[.]+[A-Za-z]+$`)
 
 	for i := 0; i < len(values); i++ {
 		switch values[i].Valid {
@@ -68,14 +58,12 @@ func PanicHandler(next http.Handler) http.Handler {
 			error := recover()
 			if error != nil {
 				log.Println(error)
-
-				resp := interfaces.ErrResponse{Message: "Internete Server Error"}
+				resp := interfaces.ErrResponse{Message: "Internal Server Error"}
 				json.NewEncoder(w).Encode(resp)
 			}
 		}()
 		next.ServeHTTP(w, r)
 	})
-
 }
 
 func ValidateToken(id string, jwtToken string) bool {
@@ -88,5 +76,4 @@ func ValidateToken(id string, jwtToken string) bool {
 	var userId, _ = strconv.ParseFloat(id, 8)
 
 	return token.Valid && tokenData["user_id"] == userId
-
 }

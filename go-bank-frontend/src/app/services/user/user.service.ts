@@ -65,12 +65,9 @@ export class UserService {
                     sessionStorage.setItem('userId', res.data.ID)
                 }
                 this.router.navigateByUrl('');
-
             } else if (res.Message) {
                 this.errorSubject.next(res.Message);
-
             }
-
         });
     }
 }

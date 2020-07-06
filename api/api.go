@@ -6,13 +6,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
 	"github.com/quocthinhluu97/go-bank/helpers"
 	"github.com/quocthinhluu97/go-bank/users"
-	"github.com/quocthinhluu97/go-bank/interfaces"
 	"github.com/quocthinhluu97/go-bank/useraccounts"
+	"github.com/quocthinhluu97/go-bank/transactions"
 	"github.com/gorilla/mux"
-
 )
 
 type Login struct {
@@ -30,9 +28,22 @@ type TransactionBody struct {
 	UserId uint
 	From uint
 	To uint
-	Amount int
+	Amount uint
 }
 
+func StartAPI() {
+	router := mux.NewRouter()
+
+	// Add panic handler middleware
+	router.Use(helpers.PanicHandler)
+	router.HandleFunc("/login", login).Methods("POST")
+	router.HandleFunc("/register", register).Methods("POST")
+	router.HandleFunc("/user/{id}", getUser).Methods("GET")
+	router.HandleFunc("/transaction", transaction).Methods("POST")
+	router.HandleFunc("/transactions/{userID}", getMyTransactions).Methods("GET")
+	fmt.Println("App is working on port 8888")
+	log.Fatal(http.ListenAndServe(":8888", router))
+}
 
 func login(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
@@ -44,21 +55,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	login := users.Login(formattedBody.Username, formattedBody.Password)
 
 	apiResponse(login, w)
-}
-
-
-
-func StartAPI() {
-	router := mux.NewRouter()
-
-	// Add panic handler middleware
-	router.Use(helpers.PanicHandler)
-	router.HandleFunc("/login", login).Methods("POST")
-	router.HandleFunc("/register", register).Methods("POST")
-	router.HandleFunc("/user/{id}", getUser).Methods("GET")
-	router.HandleFunc("transaction", transaction).Methods("POST")
-	fmt.Println("App is working on port 8888")
-	log.Fatal(http.ListenAndServe(":8888", router))
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -81,11 +77,11 @@ func readBody(r *http.Request) []byte {
 }
 
 func apiResponse(call map[string]interface{}, w http.ResponseWriter) {
-	if call["message"] == "all is fine" {
+	if call["Message"] == "all is fine" {
 		resp := call
 		json.NewEncoder(w).Encode(resp)
 	} else {
-		resp := interfaces.ErrResponse{Message: "Wrong username or passowrd"}
+		resp := call
 		json.NewEncoder(w).Encode(resp)
 	}
 }
@@ -109,4 +105,13 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 
 	transaction := useraccounts.Transaction(formattedBody.UserId, formattedBody.From,formattedBody.To, formattedBody.Amount, auth)
 	apiResponse(transaction, w)
+}
+
+func getMyTransactions(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+	auth := r.Header.Get("Authorization")
+
+	transactions := transactions.GetMyTransactions(userId, auth)
+	apiResponse(transactions, w)
 }
