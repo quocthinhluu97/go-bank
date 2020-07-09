@@ -5,7 +5,16 @@ import (
 	"github.com/quocthinhluu97/go-bank/interfaces"
 	"github.com/quocthinhluu97/go-bank/database"
 	"fmt"
+	log "github.com/sirupsen/logrus"
+	"os"
 )
+
+func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.DebugLevel)
+	log.SetReportCaller(true)
+}
 
 func getAccount(id uint) *interfaces.Account {
 	account := &interfaces.Account{}
@@ -19,6 +28,7 @@ func getAccount(id uint) *interfaces.Account {
 func Transaction(userId uint, from uint, to uint, amount uint, jwt string) map[string]interface{} {
 	userIdString := fmt.Sprint(userId)
 	isValid := helpers.ValidateToken(userIdString, jwt)
+
 	if isValid {
 		fromAccount := getAccount(from)
 		toAccount := getAccount(to)

@@ -4,7 +4,17 @@
       <h3 class="text-gray-700 font-normal mx-auto">
         Hi {{user ? user.Username: ''}}, here is your dashboard:
       </h3>
+      <p class="inline-block align-baseline text-sm text-blue-500">Wanna do
+        transaction ?
+        <a class="inline-block align-baseline font-bold text-sm
+                  text-orange-500 hover:text-blue-800" [routerLink]="['transaction']">
+          Transaction
+        </a>
+      </p>
     </div>
   </div>
   <app-account-balance *ngIf="user" [user]="user"></app-account-balance>
+  <p class="mt-4 text-center text-gray-500 text-xs">
+    &copy;2020 Go Bank App. All rights reserved.
+  </p>
 </div>

@@ -4,14 +4,23 @@ import (
 	"fmt"
 	"encoding/json"
 	"io/ioutil"
-	"log"
+	// "log"
 	"net/http"
 	"github.com/quocthinhluu97/go-bank/helpers"
 	"github.com/quocthinhluu97/go-bank/users"
 	"github.com/quocthinhluu97/go-bank/useraccounts"
 	"github.com/quocthinhluu97/go-bank/transactions"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
+	"os"
 )
+
+func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.DebugLevel)
+	log.SetReportCaller(true)
+}
 
 type Login struct {
 	Username string
@@ -96,12 +105,17 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
 func transaction(w http.ResponseWriter, r *http.Request) {
 	body := readBody(r)
+
+	log.Debug("Sent Transaction: " + string(body[:]))
+
 	auth := r.Header.Get("Authorization")
 	var formattedBody TransactionBody
 	err := json.Unmarshal(body, &formattedBody)
 	helpers.HandleErr(err)
+
 
 	transaction := useraccounts.Transaction(formattedBody.UserId, formattedBody.From,formattedBody.To, formattedBody.Amount, auth)
 	apiResponse(transaction, w)

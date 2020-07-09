@@ -6,14 +6,23 @@ import { UserResolverService  } from './services/user-resolver/user-resolver.ser
 import { LoginComponent  } from './login/login.component';
 import { DashboardComponent  } from './dashboard/dashboard.component';
 import { RegisterComponent  } from './register/register.component';
+import {TransactionComponent} from './transaction/transaction.component';
 
 
 const routes: Routes = [
     { path: 'login', component: LoginComponent  },
+
     { path: 'register', component: RegisterComponent  },
+
+    { path: 'transaction',
+      component: TransactionComponent,
+      canActivate: [AuthGuardGuard],
+      resolve: { user: UserResolverService }
+    },
+
     {
         path: '',
-        component: DashboardComponent,
+        component: LoginComponent,
         canActivate: [AuthGuardGuard],
         resolve: { user: UserResolverService  }
     }

@@ -10,7 +10,7 @@ export class DashboardComponent implements OnInit {
     user: any = null;
 
     constructor(
-        private route: ActivatedRoute,
+       private route: ActivatedRoute,
     ) { }
 
     ngOnInit(): void {

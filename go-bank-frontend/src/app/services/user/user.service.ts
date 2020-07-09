@@ -55,6 +55,43 @@ export class UserService {
         return this.http.get(`${this.url}user/${userId}`, reqHeader);
     }
 
+    transaction(toAccountID: number, amount: number) {
+        const userId = parseInt(sessionStorage.getItem('userId'));
+        const fromID  = parseInt(sessionStorage.getItem('userId'));
+        const jwtToken = sessionStorage.getItem('jwt');
+        const reqHeader = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + jwtToken,
+            })
+        };
+
+        var body = {
+            "userId": userId,
+            "From": fromID,
+            "To": parseInt(toAccountID.toString()),
+            "Amount": parseInt(amount.toString()),
+        };
+        this.router.navigateByUrl('dashboard');
+
+        this.http.post(`${this.url}transaction`,
+                       body,
+                       reqHeader)
+            .toPromise()
+            .then((res: any) => {
+                if (res && res.jwt) {
+                    sessionStorage.setItem('jwt', res.jwt);
+                    this.errorSubject.next(null);
+                    if (res.data) {
+                        this.userSubject.next(res.data);
+                        sessionStorage.setItem('userId', res.data.ID)
+                    }
+                } else if (res.Message) {
+                    this.errorSubject.next(res.Message);
+                }
+            });
+    }
+
     register(Username: string, Email: string, Password: string) {
         this.http.post(`${this.url}register`, { Username, Email, Password  }, httpOptions).toPromise().then((res: any) => {
             if (res && res.jwt) {

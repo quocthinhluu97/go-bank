@@ -57,7 +57,7 @@ func Login(username string, pass string) map[string]interface{} {
 
 
 		accounts := []interfaces.ResponseAccount{}
-		database.DB.Table("accounts").Select("id, name, balance").Where("user_id = ? ", user.ID).Scan(&accounts)
+		database.DB.Table("accounts").Select("id, username, balance").Where("user_id = ? ", user.ID).Scan(&accounts)
 
 
 		var response = prepareResponse(user, accounts, true)
