@@ -22,7 +22,7 @@ const routes: Routes = [
 
     {
         path: '',
-        component: LoginComponent,
+        component: DashboardComponent,
         canActivate: [AuthGuardGuard],
         resolve: { user: UserResolverService  }
     }

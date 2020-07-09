@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../services/user/user.service';
+import { UseraccountsService } from '../services/useraccounts/useraccounts.service';
 
 @Component({
     selector: 'app-transaction',
@@ -20,7 +21,7 @@ export class TransactionComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private userService: UserService,
+        private userAccountsService: UseraccountsService,
     ) { }
 
     ngOnInit(): void {
@@ -46,7 +47,7 @@ export class TransactionComponent implements OnInit {
     }
 
     onTransaction(): void {
-        this.userService
+        this.userAccountsService
             .transaction(this.beneficiary_account, this.amount);
 
 
